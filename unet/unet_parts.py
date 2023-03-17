@@ -12,6 +12,12 @@ class DoubleConv(nn.Module):
         super().__init__()
         if not mid_channels:
             mid_channels = out_channels
+        # self.cn1=nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1, bias=False)
+        # self.norm1=nn.BatchNorm2d(mid_channels)
+        # self.re1=nn.ReLU(inplace=True)
+        # self.cn2=nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1, bias=False)
+        # self.norm2=nn.BatchNorm2d(out_channels)
+        # self.re2=nn.ReLU(inplace=True)
         self.double_conv = nn.Sequential(
             nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1, bias=False),
             nn.BatchNorm2d(mid_channels),
@@ -22,7 +28,14 @@ class DoubleConv(nn.Module):
         )
 
     def forward(self, x):
-        return self.double_conv(x)
+        y = self.double_conv(x)
+        # temp=self.cn1(x)
+        # temp=self.norm1(temp)
+        # temp=self.re1(temp)
+        # temp=self.cn2(temp)
+        # temp=self.norm2(temp)
+        # temp=self.re2(temp)
+        return y
 
 
 class Down(nn.Module):
@@ -51,6 +64,13 @@ class Up(nn.Module):
             self.conv = DoubleConv(in_channels, out_channels, in_channels // 2)
         else:
             self.up = nn.ConvTranspose2d(in_channels, in_channels // 2, kernel_size=2, stride=2)
+            print(self.up.weight.shape)
+
+            nn1 = nn.ConvTranspose2d(512, 1024, kernel_size=2, stride=2)
+            nn2 = nn.ConvTranspose2d(1024, 512, kernel_size=2, stride=2)
+            print(nn1.weight.shape)
+            print(nn2.weight.shape)
+
             self.conv = DoubleConv(in_channels, out_channels)
 
     def forward(self, x1, x2):

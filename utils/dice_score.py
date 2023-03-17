@@ -7,8 +7,10 @@ def dice_coeff(input: Tensor, target: Tensor, reduce_batch_first: bool = False, 
     assert input.size() == target.size()
     assert input.dim() == 3 or not reduce_batch_first
 
-    sum_dim = (-1, -2) if input.dim() == 2 or not reduce_batch_first else (-1, -2, -3)
+    # input_a = input.cpu().numpy()
+    # target_a = target.cpu().numpy()
 
+    sum_dim = (-1, -2) if input.dim() == 2 or not reduce_batch_first else (-1, -2, -3)
     inter = 2 * (input * target).sum(dim=sum_dim)
     sets_sum = input.sum(dim=sum_dim) + target.sum(dim=sum_dim)
     sets_sum = torch.where(sets_sum == 0, inter, sets_sum)

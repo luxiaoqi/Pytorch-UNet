@@ -19,8 +19,12 @@ from unet import UNet
 from utils.data_loading import BasicDataset, CarvanaDataset
 from utils.dice_score import dice_loss
 
-dir_img = Path('./data/imgs/')
-dir_mask = Path('./data/masks/')
+import torch.nn.functional as F
+
+#dir_img = Path('./data/imgs/')
+#dir_mask = Path('./data/masks/')
+dir_img = Path('./data/train/image/')
+dir_mask = Path('./data/train/label/')
 dir_checkpoint = Path('./checkpoints/')
 
 
@@ -193,7 +197,7 @@ if __name__ == '__main__':
     # Change here to adapt to your data
     # n_channels=3 for RGB images
     # n_classes is the number of probabilities you want to get per pixel
-    model = UNet(n_channels=3, n_classes=args.classes, bilinear=args.bilinear)
+    model = UNet(n_channels=1, n_classes=args.classes, bilinear=args.bilinear)
     model = model.to(memory_format=torch.channels_last)
 
     logging.info(f'Network:\n'
