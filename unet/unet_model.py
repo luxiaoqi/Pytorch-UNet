@@ -2,6 +2,7 @@
 
 from .unet_parts import *
 from PIL import Image
+from .FeatureSaveToImage import *
 
 class UNet(nn.Module):
     def __init__(self, n_channels, n_classes, bilinear=False):
@@ -23,16 +24,27 @@ class UNet(nn.Module):
         self.outc = (OutConv(64, n_classes))
 
     def forward(self, x):
+        toImage = FeatureSaveToImage(img_dir="out", enable=False)
         x1 = self.inc(x)
+        toImage.save_feature_to_img(x1, "x1")
         x2 = self.down1(x1)
+        toImage.save_feature_to_img(x2, "x2")
         x3 = self.down2(x2)
+        toImage.save_feature_to_img(x3, "x3")
         x4 = self.down3(x3)
+        toImage.save_feature_to_img(x4, "x4")
         x5 = self.down4(x4)
+        toImage.save_feature_to_img(x5, "x5")
         x = self.up1(x5, x4)
+        toImage.save_feature_to_img(x, "up1")
         x = self.up2(x, x3)
+        toImage.save_feature_to_img(x, "up2")
         x = self.up3(x, x2)
+        toImage.save_feature_to_img(x, "up3")
         x = self.up4(x, x1)
+        toImage.save_feature_to_img(x, "up4")
         logits = self.outc(x)
+        toImage.save_feature_to_img(logits, "up5_outc")
         return logits
 
     def use_checkpointing(self):
@@ -46,3 +58,4 @@ class UNet(nn.Module):
         self.up3 = torch.utils.checkpoint(self.up3)
         self.up4 = torch.utils.checkpoint(self.up4)
         self.outc = torch.utils.checkpoint(self.outc)
+
