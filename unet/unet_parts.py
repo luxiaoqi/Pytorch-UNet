@@ -66,10 +66,10 @@ class Up(nn.Module):
             self.up = nn.ConvTranspose2d(in_channels, in_channels // 2, kernel_size=2, stride=2)
             print(self.up.weight.shape)
 
-            nn1 = nn.ConvTranspose2d(512, 1024, kernel_size=2, stride=2)
-            nn2 = nn.ConvTranspose2d(1024, 512, kernel_size=2, stride=2)
-            print(nn1.weight.shape)
-            print(nn2.weight.shape)
+            # nn1 = nn.ConvTranspose2d(512, 1024, kernel_size=2, stride=2)
+            # nn2 = nn.ConvTranspose2d(1024, 512, kernel_size=2, stride=2)
+            # print(nn1.weight.shape)
+            # print(nn2.weight.shape)
 
             self.conv = DoubleConv(in_channels, out_channels)
 

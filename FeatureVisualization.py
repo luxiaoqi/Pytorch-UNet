@@ -86,10 +86,10 @@ class FeatureVisualization():
 
 
 
-
 if __name__=='__main__':
     # get class
-    myClass=FeatureVisualization('./input_images/home.jpg',5)
+    #myClass=FeatureVisualization('./input_images/home.jpg',5)
+    myClass=FeatureVisualization('./data/test/0.png',5)
     print (myClass.pretrained_model)
 
     myClass.save_feature_to_img()

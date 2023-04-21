@@ -24,7 +24,7 @@ def predict_img(net,
 
     with torch.no_grad():
         output = net(img).cpu()
-        output = F.interpolate(output, (full_img.size[1], full_img.size[0]), mode='bilinear')
+        #output = F.interpolate(output, (full_img.size[1], full_img.size[0]), mode='bilinear')
         if net.n_classes > 1:
             mask = output.argmax(dim=1)
         else:
@@ -48,13 +48,13 @@ def get_args():
                         help='Scale factor for the input images')
     parser.add_argument('--bilinear', action='store_true', default=False, help='Use bilinear upsampling')
     parser.add_argument('--classes', '-c', type=int, default=2, help='Number of classes')
-    
+
     return parser.parse_args()
 
 
 def get_output_filenames(args):
     def _generate_name(fn):
-        return f'{os.path.splitext(fn)[0]}_OUT.png'
+        return f'{os.path.splitext(fn)[0]}_1_OUT.png'
 
     return args.output or list(map(_generate_name, args.input))
 
@@ -80,6 +80,11 @@ if __name__ == '__main__':
     args = get_args()
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
+    listItem=[]
+    for i in range(30):
+        listItem.append(f'data\\test1\\{i}.png')
+    args.input = listItem
+
     in_files = args.input
     out_files = get_output_filenames(args)
 
@@ -96,8 +101,18 @@ if __name__ == '__main__':
 
     logging.info('Model loaded!')
 
+    # for index, layer in enumerate(net.features):
+    #     text="11"
+    #     print(text)
+    # for idx, m in enumerate(net.modules()):
+    #     print(idx, '->', m)
+
+
     for i, filename in enumerate(in_files):
         logging.info(f'Predicting image {filename} ...')
+
+        if not os.path.exists(filename):
+            continue
         img = Image.open(filename)
 
         mask = predict_img(net=net,
