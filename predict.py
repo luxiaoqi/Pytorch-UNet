@@ -18,13 +18,13 @@ def predict_img(net,
                 scale_factor=1,
                 out_threshold=0.5):
     net.eval()
-    img = torch.from_numpy(BasicDataset.preprocess(None, full_img, scale_factor, is_mask=False))
+    img = torch.from_numpy(BasicDataset.preprocess(None, full_img, full_img.size, scale_factor, is_mask=False)) #w, h = image_size #pil_img.size
     img = img.unsqueeze(0)
     img = img.to(device=device, dtype=torch.float32)
 
     with torch.no_grad():
         output = net(img).cpu()
-        #output = F.interpolate(output, (full_img.size[1], full_img.size[0]), mode='bilinear')
+        output = F.interpolate(output, (full_img.size[1], full_img.size[0]), mode='bilinear')
         if net.n_classes > 1:
             mask = output.argmax(dim=1)
         else:
@@ -54,7 +54,7 @@ def get_args():
 
 def get_output_filenames(args):
     def _generate_name(fn):
-        return f'{os.path.splitext(fn)[0]}_1_OUT.png'
+        return f'{os.path.splitext(fn)[0]}_OUT.png'
 
     return args.output or list(map(_generate_name, args.input))
 
@@ -75,15 +75,24 @@ def mask_to_image(mask: np.ndarray, mask_values):
 
     return Image.fromarray(out)
 
+def getFiles(path, ext=''):
+    filesTemp = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            res=os.path.splitext(file)
+            if len(res) != 0 and (res[1] not in ext):
+                continue
+            filePath = os.path.join(root, file)
+            filesTemp.append(filePath)
+    return filesTemp
 
 if __name__ == '__main__':
     args = get_args()
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-    listItem=[]
-    for i in range(30):
-        listItem.append(f'data\\test1\\{i}.png')
-    args.input = listItem
+    if len(args.input) == 1 and os.path.exists(args.input[0]) and os.path.isdir(args.input[0]):
+        files = getFiles(args.input[0], '.png')
+        args.input = files
 
     in_files = args.input
     out_files = get_output_filenames(args)
@@ -100,13 +109,6 @@ if __name__ == '__main__':
     net.load_state_dict(state_dict)
 
     logging.info('Model loaded!')
-
-    # for index, layer in enumerate(net.features):
-    #     text="11"
-    #     print(text)
-    # for idx, m in enumerate(net.modules()):
-    #     print(idx, '->', m)
-
 
     for i, filename in enumerate(in_files):
         logging.info(f'Predicting image {filename} ...')

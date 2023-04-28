@@ -43,6 +43,8 @@ class BasicDataset(Dataset):
         self.scale = scale
         self.mask_suffix = mask_suffix
 
+        self.image_size = (512, 512)  #输入图像大小格式化 image_size*scale
+
         self.ids = [splitext(file)[0] for file in listdir(images_dir) if isfile(join(images_dir, file)) and not file.startswith('.')]
         if not self.ids:
             raise RuntimeError(f'No input file found in {images_dir}, make sure you put your images there')
@@ -62,8 +64,8 @@ class BasicDataset(Dataset):
         return len(self.ids)
 
     @staticmethod
-    def preprocess(mask_values, pil_img, scale, is_mask):
-        w, h = pil_img.size
+    def preprocess(mask_values, pil_img, image_size, scale, is_mask):
+        w, h = image_size #pil_img.size
         newW, newH = int(scale * w), int(scale * h)
         assert newW > 0 and newH > 0, 'Scale is too small, resized images would have no pixel'
         pil_img = pil_img.resize((newW, newH), resample=Image.NEAREST if is_mask else Image.BICUBIC)
@@ -103,12 +105,13 @@ class BasicDataset(Dataset):
         assert img.size == mask.size, \
             f'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
 
-        img = self.preprocess(self.mask_values, img, self.scale, is_mask=False)
-        mask = self.preprocess(self.mask_values, mask, self.scale, is_mask=True)
+        img = self.preprocess(self.mask_values, img, self.image_size, self.scale, is_mask=False)
+        mask = self.preprocess(self.mask_values, mask, self.image_size, self.scale, is_mask=True)
+        #logging.info(f'check image shape after preprocess: idx={idx} name={name}  img={img.shape}')
 
         return {
             'image': torch.as_tensor(img.copy()).float().contiguous(),
-            'mask': torch.as_tensor(mask.copy()).long().contiguous()
+            'mask': torch.as_tensor(mask.copy()).long().contiguous(),
         }
 
 

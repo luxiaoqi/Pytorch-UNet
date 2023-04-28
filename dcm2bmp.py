@@ -6,6 +6,7 @@ import os
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image
 
 def getFiles(path, ext=''):
     filesTemp = []
@@ -70,12 +71,15 @@ def main():
         # print(temp.shape)
 
 def showImage():
-    path='D:\\workspace\\Scout\\scout_cardiac\\1007_101_1910_dcm_json\\label.png'
-    img_arr = cv2.imread(path, 0)
+    path='D:\\workspace\\Pytorch-UNet\\data\\test\\776_101_1480_OUT.png'
+    img_arr = cv2.imread(path)
     mmax = np.max(img_arr)
     mmin = np.min(img_arr)
     cv2.imshow("image show", img_arr)
     cv2.waitKey(0)
+    # img = Image.open(path)
+    # ar = np.array(img)
+    # img.show()
 
 
 if __name__== "__main__" :
