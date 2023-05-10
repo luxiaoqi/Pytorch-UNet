@@ -160,14 +160,129 @@ def cv2_do():
     # result
 
     #均值滤波
-    img = cv2.imread('image\\lenacolor.png')
-    img_blur1=cv2.blur(img, (3,3))
-    img_blur2=cv2.blur(img, (30,30))
-    fig,axes=plt.subplots(1, 3, figsize=(10, 5), dpi=100)
-    axes[0].imshow(img[:, :, ::-1])
-    axes[1].imshow(img_blur1[:, :, ::-1])
-    axes[2].imshow(img_blur2[:, :, ::-1])
+    # img = cv2.imread('image\\lenacolor.png')
+    # img_blur1=cv2.blur(img, (3,3))
+    # img_blur2=cv2.blur(img, (30,30))
+    # fig,axes=plt.subplots(1, 3, figsize=(10, 5), dpi=100)
+    # axes[0].imshow(img[:, :, ::-1])
+    # axes[1].imshow(img_blur1[:, :, ::-1])
+    # axes[2].imshow(img_blur2[:, :, ::-1])
+    # plt.show()
+
+    # #图像腐蚀
+    # img = cv2.imread('image\\lenacolor.png', 0)
+    # _, img = cv2.threshold(img, 127, 1, type=cv2.THRESH_BINARY)
+    # fig,axes=plt.subplots(1, 4, figsize=(10, 5), dpi=100)
+    # kernel1 = np.ones((5,5), np.uint8)
+    # kernel2 = np.ones((10, 10), np.uint8)
+    # img_erode_kernel1 = cv2.erode(img, kernel1)
+    # img_erode_kernel2 = cv2.erode(img, kernel2)
+    # axes[0].imshow(img, cmap='gray')
+    # axes[1].imshow(img_erode_kernel1, cmap='gray')
+    # axes[2].imshow(img_erode_kernel2, cmap='gray')
+    # plt.show()
+
+    #Canny边缘检测
+    # lena = cv2.imread('image\\lenacolor.png', 0)
+    # lena_canny_1 = cv2.Canny(lena, 128, 200)
+    # lena_canny_2 = cv2.Canny(lena, 32, 128)
+    # fig, axes = plt.subplots(1, 3, figsize=(10, 6), dpi=100)
+    # axes[0].imshow(lena, cmap='gray')
+    # axes[1].imshow(lena_canny_1, cmap='gray')
+    # axes[2].imshow(lena_canny_2, cmap='gray')
+    # plt.show()
+
+    #下采样
+    # lena0 = cv2.imread('image\\lenacolor.png', 0)
+    # lena1 = cv2.pyrDown(lena0)
+    # lena2 = cv2.pyrDown(lena1)
+    # lena3 = cv2.pyrDown(lena2)
+    # lena4 = cv2.pyrDown(lena3)
+    # Fig = plt.figure(figsize=(16, 10))
+    # Grid = plt.GridSpec(33, 33)
+    # axes1 = Fig.add_subplot(Grid[:17, :17]), plt.imshow(lena0, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes2 = Fig.add_subplot(Grid[:9, 17:25]), plt.imshow(lena1, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes3 = Fig.add_subplot(Grid[:5, 25:29]), plt.imshow(lena2, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes4 = Fig.add_subplot(Grid[:3, 29:31]), plt.imshow(lena3, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes5 = Fig.add_subplot(Grid[:1, 31:32]), plt.imshow(lena4, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # plt.show()
+
+    #上采样
+    # lena0 = cv2.imread(r'image\\lenacolor.png', 0)  # 512
+    # lena0 = cv2.resize(lena0, dsize=None, fx=1.0/2, fy=1.0/2)
+    # lena1 = cv2.pyrUp(lena0)  # 1024
+    # lena2 = cv2.pyrUp(lena1)  # 2048
+    # lena3 = cv2.pyrUp(lena2)  # 4096
+    # Fig = plt.figure(figsize=(16, 10))
+    # Grid = plt.GridSpec(16, 16)
+    # axes1 = Fig.add_subplot(Grid[0, 0]), plt.imshow(lena0, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes2 = Fig.add_subplot(Grid[0:3, 1:3]), plt.imshow(lena1, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes3 = Fig.add_subplot(Grid[0:5, 3:7]), plt.imshow(lena2, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes4 = Fig.add_subplot(Grid[0:9, 7:15]), plt.imshow(lena3, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # plt.show()
+
+    #先下采样再上采样
+    # lena0 = cv2.imread(r'image\\lenacolor.png', 0)  # 512
+    # lena1 = cv2.pyrDown(lena0)  # 216
+    # lena2 = cv2.pyrUp(lena1)  # 512
+    # diff1 = lena2 - lena0
+    # lena11 = cv2.pyrUp(lena0)  # 1024
+    # lena22 = cv2.pyrDown(lena11)  # 512
+    # diff2 = lena22 - lena0
+    # Fig = plt.figure(figsize=(16, 10))
+    # Grid = plt.GridSpec(6, 10)
+    # axes1 = Fig.add_subplot(Grid[:2, :2]), plt.imshow(lena0, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes2 = Fig.add_subplot(Grid[0, 2]), plt.imshow(lena1, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes3 = Fig.add_subplot(Grid[:2, 3:5]), plt.imshow(lena2, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes4 = Fig.add_subplot(Grid[:2, 5:7]), plt.imshow(diff1, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes21 = Fig.add_subplot(Grid[2:4, :2]), plt.imshow(lena0, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes22 = Fig.add_subplot(Grid[2:6, 2:6]), plt.imshow(lena11, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes23 = Fig.add_subplot(Grid[2:4, 6:8]), plt.imshow(lena22, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # axes24 = Fig.add_subplot(Grid[2:4, 8:10]), plt.imshow(diff2, cmap='gray'), plt.box(), plt.xticks([]), plt.yticks([])
+    # plt.show()
+
+    #绘制图像内的轮廓
+    # img = cv2.imread(r'image\\lenacolor.png', 0)  # 读图像
+    # _,img = cv2.threshold(img, 127, 255, type=cv2.THRESH_BINARY)
+    # kernel2 = np.ones((10, 10), np.uint8)
+    # img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel2)
+    # img_copy = img.copy()
+    # img_gray = img_copy #cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 将图像变成灰度图像
+    # t, img_binary = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY)  # 将灰度图像变成二值图像
+    # contours, hierarchy = cv2.findContours(img_binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  # 生成轮廓
+    # img_contours =  np.zeros(img_copy.shape, np.uint8)
+    # img_contours = cv2.drawContours(img_contours, contours, -1, (255, 0, 0), 10)  # 在原图上绘制轮廓
+    # # 在一张黑色的背景里，分别绘制三个轮廓：
+    # list = ['img_contours0', 'img_contours1', 'img_contours2']
+    # for i in range(3):
+    #     img_temp = np.zeros(img.shape, np.uint8)
+    #     list[i] = cv2.drawContours(img_temp, contours, i, (0, 255, 0), 5)
+    # # 可视化轮廓
+    # fig, axes = plt.subplots(1, 4, figsize=(10, 6), dpi=100)
+    # axes[0].imshow(img_contours, cmap='gray')
+    # axes[1].imshow(list[0], cmap='gray')
+    # axes[2].imshow(img, cmap='gray')
+    # axes[3].imshow(list[2], cmap='gray')
+    # # axes[2].imshow(list[1], cmap='gray')
+    # # axes[3].imshow(list[2], cmap='gray')
+    # plt.show()
+
+    img = cv2.imread(r'image\\lenacolor.png')
+    mask = np.zeros(img.shape, np.uint8)
+    mask[200:400, 200:400] = 255
+    img_mask = cv2.bitwise_and(img, mask)
+    hist_img = cv2.calcHist([img], [0], None, [256], [0, 256])
+    hist_img_mask = cv2.calcHist([img], [0], mask[:, :, 0], [256], [0, 256])
+    hist_mask = cv2.calcHist([img_mask[200:400, 200:400]], [0], None, [256], [0, 256])
+    # 可视化
+    plt.figure(figsize=(12, 3))
+    plt.subplot(151), plt.imshow(img[:, :, ::-1])
+    plt.subplot(152), plt.imshow(img_mask[:, :, ::-1])
+    plt.subplot(153), plt.plot(hist_img), plt.plot(hist_img_mask)  # 无掩膜和有掩膜的直方图画到一起
+    plt.subplot(154), plt.plot(hist_img_mask)  # 单独划出有掩膜的直方图
+    plt.subplot(155), plt.plot(hist_mask)  # 单独把mask部分图像的直方图画出来，和上面的一模一样
     plt.show()
+
 
 cv2_do()
 print_hi('PyCharm')

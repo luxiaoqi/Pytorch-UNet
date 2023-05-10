@@ -18,7 +18,8 @@ from evaluate import evaluate
 from unet import UNet
 from utils.data_loading import BasicDataset, CarvanaDataset
 from utils.dice_score import dice_loss
-
+import time
+import datetime
 import torch.nn.functional as F
 
 #dir_img = Path('./data/imgs/')
@@ -187,9 +188,15 @@ def get_args():
     return parser.parse_args()
 
 
+def format_time(time):
+    elapsed_rounded = int(round((time)))
+    # 格式化为 hh:mm:ss
+    return str(datetime.timedelta(seconds=elapsed_rounded))
+
+
 if __name__ == '__main__':
     args = get_args()
-
+    t0 = time.time()
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'Using device {device}')
@@ -239,3 +246,9 @@ if __name__ == '__main__':
             val_percent=args.val / 100,
             amp=args.amp
         )
+    t1 = time.time()
+    training_time = format_time(t1 - t0)
+    print("运行时间：", training_time, "秒")
+
+
+
