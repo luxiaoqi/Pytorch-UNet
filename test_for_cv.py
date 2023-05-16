@@ -267,21 +267,63 @@ def cv2_do():
     # # axes[3].imshow(list[2], cmap='gray')
     # plt.show()
 
-    img = cv2.imread(r'image\\lenacolor.png')
-    mask = np.zeros(img.shape, np.uint8)
-    mask[200:400, 200:400] = 255
-    img_mask = cv2.bitwise_and(img, mask)
-    hist_img = cv2.calcHist([img], [0], None, [256], [0, 256])
-    hist_img_mask = cv2.calcHist([img], [0], mask[:, :, 0], [256], [0, 256])
-    hist_mask = cv2.calcHist([img_mask[200:400, 200:400]], [0], None, [256], [0, 256])
-    # 可视化
-    plt.figure(figsize=(12, 3))
-    plt.subplot(151), plt.imshow(img[:, :, ::-1])
-    plt.subplot(152), plt.imshow(img_mask[:, :, ::-1])
-    plt.subplot(153), plt.plot(hist_img), plt.plot(hist_img_mask)  # 无掩膜和有掩膜的直方图画到一起
-    plt.subplot(154), plt.plot(hist_img_mask)  # 单独划出有掩膜的直方图
-    plt.subplot(155), plt.plot(hist_mask)  # 单独把mask部分图像的直方图画出来，和上面的一模一样
+    # img = cv2.imread(r'image\\lenacolor.png')
+    # mask = np.zeros(img.shape, np.uint8)
+    # mask[200:400, 200:400] = 255
+    # img_mask = cv2.bitwise_and(img, mask)
+    # hist_img = cv2.calcHist([img], [0], None, [256], [0, 256])
+    # hist_img_mask = cv2.calcHist([img], [0], mask[:, :, 0], [256], [0, 256])
+    # hist_mask = cv2.calcHist([img_mask[200:400, 200:400]], [0], None, [256], [0, 256])
+    # # 可视化
+    # plt.figure(figsize=(12, 3))
+    # plt.subplot(151), plt.imshow(img[:, :, ::-1])
+    # plt.subplot(152), plt.imshow(img_mask[:, :, ::-1])
+    # plt.subplot(153), plt.plot(hist_img), plt.plot(hist_img_mask)  # 无掩膜和有掩膜的直方图画到一起
+    # plt.subplot(154), plt.plot(hist_img_mask)  # 单独划出有掩膜的直方图
+    # plt.subplot(155), plt.plot(hist_mask)  # 单独把mask部分图像的直方图画出来，和上面的一模一样
+    # plt.show()
+
+    #######分水岭算法
+    img = cv2.imread(r'water_coins.jpg')  # img.shape返回：(312, 252, 3)
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # img_gray.shape返回：(312, 252)
+    # ------------Otsu阈值处理,变成二值图像--------------
+    t, otsu = cv2.threshold(img_gray, 0, 255,
+                            cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)  # t返回162.0， otsu.shape返回(312, 252)
+    # ------------形态学的开运算，就是先腐蚀erode后膨胀dilate,目的一是去噪，二是先把前景对象重叠的部分分开，方便后面计数或者画每个对象的轮廓-------------
+    img_opening = cv2.morphologyEx(otsu, cv2.MORPH_OPEN, kernel=np.ones((3, 3), np.uint8), iterations=2)  # A 这还是一个二值图像
+    # -------计算距离,确定前景对象--------------------
+    dist = cv2.distanceTransform(img_opening, cv2.DIST_L2, 5)  # float32的浮点型数组，dist.shape返回(312, 252),dist是一个灰度图像
+    th, sure_fg = cv2.threshold(dist, 0.5 * dist.max(), 255,
+                                cv2.THRESH_BINARY)  # 把dist阈值化处理，变成一个0和255的二值图像，此时就是我们要的确定前景
+    sure_fg = np.uint8(sure_fg)
+    # -----计算确定背景、计算未知区域------------------
+    sure_bg = cv2.dilate(img_opening, kernel=np.ones((3, 3), np.uint8), iterations=3)  # 对前景膨胀来确定背景
+    unknown = cv2.subtract(sure_bg, sure_fg)  # 确定背景图-确定前景图，生成未知区域图
+    # ------标注确定前景图,调整标注规则---------------------------
+    ret, labels = cv2.connectedComponents(sure_fg)  # 有24个硬币，ret返回是25, labels是一个形状是(312, 252)的int32的数组
+    labels = labels + 1  # 把背景标为1，前景对象依次为2，3，，，26
+    labels[unknown == 255] = 0  # 0代表未知区域
+    loc = np.where(labels == 0)
+    # ------------使用分水岭算法对图像进行分割---------------
+    img1 = img.copy()
+    labels1 = labels.copy()
+    markers = cv2.watershed(img1, labels)
+    img1[markers == -1] = [0, 255, 0]
+    # 可视化：
+    plt.figure(figsize=(12, 6))
+    plt.subplot(251), plt.imshow(img[:, :, ::-1])  # 原图
+    plt.subplot(252), plt.imshow(img_gray, cmap='gray')  # 灰度图
+    plt.subplot(253), plt.imshow(otsu, cmap='gray')  # otsu阈值处理后的二值图
+    plt.subplot(254), plt.imshow(img_opening, cmap='gray')  # 开运算去噪后的图像
+    plt.subplot(255), plt.imshow(dist, cmap='gray')  # 距离图像
+    plt.subplot(256), plt.imshow(sure_fg, cmap='gray')  # 确定前景
+    plt.subplot(257), plt.imshow(sure_bg, cmap='gray')  # 确定背景
+    plt.subplot(258), plt.imshow(unknown, cmap='gray')  # 确定未知区域图
+    plt.subplot(259), plt.imshow(labels, cmap='gray')  # 标注图
+    plt.subplot(2, 5, 10), plt.imshow(img1[:, :, ::-1])  # 分割结果
     plt.show()
+
+
 
 
 cv2_do()

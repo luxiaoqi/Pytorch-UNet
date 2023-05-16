@@ -7,7 +7,7 @@ import torch
 import torch.nn.functional as F
 from PIL import Image
 from torchvision import transforms
-
+import cv2
 from utils.data_loading import BasicDataset
 from unet import UNet
 from utils.utils import plot_img_and_mask
@@ -122,6 +122,13 @@ if __name__ == '__main__':
                            scale_factor=args.scale,
                            out_threshold=args.mask_threshold,
                            device=device)
+        #转成RECT
+        # mask = mask.astype(np.uint8)
+        # rectList = []
+        # contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # for j in range(len(contours)):
+        #     #x, y, w, h = cv2.boundingRect(contours[j])
+        #     rectList.append(cv2.minAreaRect(contours[j]))
 
         if not args.no_save:
             out_filename = out_files[i]
