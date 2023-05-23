@@ -122,19 +122,24 @@ if __name__ == '__main__':
                            scale_factor=args.scale,
                            out_threshold=args.mask_threshold,
                            device=device)
-        #转成RECT
-        # mask = mask.astype(np.uint8)
-        # rectList = []
-        # contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        # for j in range(len(contours)):
-        #     #x, y, w, h = cv2.boundingRect(contours[j])
-        #     rectList.append(cv2.minAreaRect(contours[j]))
 
         if not args.no_save:
+            # out_filename = out_files[i]
+            # result = mask_to_image(mask, mask_values)
+            # result.save(out_filename)
+            # logging.info(f'Mask saved to {out_filename}')
+
+            # 转成RECT
+            img_draw = img.copy()
+            img_draw = np.asarray(img_draw)
             out_filename = out_files[i]
-            result = mask_to_image(mask, mask_values)
-            result.save(out_filename)
-            logging.info(f'Mask saved to {out_filename}')
+            mask = mask.astype(np.uint8)
+            kernal = np.ones((5,5), np.uint8)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernal)
+            rectList = []
+            contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            cv2.drawContours(img_draw, contours, -1,(255), 2)
+            Image.fromarray(img_draw).save(out_filename)
 
         if args.viz:
             logging.info(f'Visualizing results for image {filename}, close to continue...')
