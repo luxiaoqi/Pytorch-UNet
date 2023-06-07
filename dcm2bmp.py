@@ -39,6 +39,19 @@ def dcm2bmp(resource, des):
     min_val = np.min(image)
     img_arr = (image - min_val)*255 / (max_val - min_val)
     img_arr = img_arr.astype(np.uint8)
+	
+    # image = image*RescaleSlope+RescaleIntercept
+    # min_val = WindowCenter-WindowWidth/2
+    # max_val = WindowCenter+WindowWidth/2
+    # img_arr = (image - min_val)*255.0 / (max_val - min_val)
+    # img_arr[img_arr <= 0] = 0
+    # img_arr[img_arr >= 255.0] = 255.0
+    # img_arr = img_arr.astype(np.uint8)
+
+    #hist图
+    # hist = cv2.calcHist([image], [0], None, [256], [0, 256])
+    # plt.hist(image.ravel(), 256)
+    # plt.show()
 
     #show image view
     # cv2.imshow("image show",img_arr)
@@ -58,8 +71,9 @@ def get_args():
 
 def main():
     args = get_args()
-    path = args.inDir #'D:\workspace\Scout\scout_cardiac'
+    path = args.inDir #'D:\workspace\Scout\scout_cardiac\dcm'
     files = getFiles(path, '.dcm')
+    # files = ["D:\workspace\Scout\scout_cardiac\dcm\\976_101_1862.dcm"]
     print(len(files))
     #print(files)
     for file in files:
@@ -71,7 +85,7 @@ def main():
         # print(temp.shape)
 
 def showImage():
-    path='D:\\workspace\\Pytorch-UNet\\data\\test\\776_101_1480_OUT.png'
+    path='D:\\workspace\\Pytorch-UNet\\data\\test\\30246_101_29.bmp'
     img_arr = cv2.imread(path)
     mmax = np.max(img_arr)
     mmin = np.min(img_arr)

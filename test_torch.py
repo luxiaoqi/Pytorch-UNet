@@ -33,6 +33,8 @@ def test_CrossEntropyLoss():
     print("loss_1=", loss_1)
 
 
-model1 = UNet(1, 2)
-for n in model1.modules():
-    print(n)
+test_CrossEntropyLoss()
+
+# model1 = UNet(1, 2)
+# for n in model1.modules():
+#     print(n)

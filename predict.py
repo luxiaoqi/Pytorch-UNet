@@ -84,6 +84,7 @@ def getFiles(path, ext=''):
                 continue
             filePath = os.path.join(root, file)
             filesTemp.append(filePath)
+        return filesTemp
     return filesTemp
 
 if __name__ == '__main__':
@@ -91,7 +92,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
     if len(args.input) == 1 and os.path.exists(args.input[0]) and os.path.isdir(args.input[0]):
-        files = getFiles(args.input[0], '.png')
+        files = getFiles(args.input[0], '.bmp .png')
         args.input = files
 
     in_files = args.input

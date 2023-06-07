@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument('--model', '-m', default='MODEL.pth', metavar='FILE',
                         help='Specify the file in which the model is stored')
     parser.add_argument('--input', '-i', default='traceImage.png', metavar='FILE', help='Filenames of input images')
-    parser.add_argument('--output', '-o', default='traceMODEL1.pth', metavar='FILE', help='Modelnames of output model')
+    parser.add_argument('--output', '-o', default='traceMODEL.pth', metavar='FILE', help='Modelnames of output model')
     parser.add_argument('--scale', '-s', type=float, default=0.5,
                         help='Scale factor for the input images')
     parser.add_argument('--bilinear', action='store_true', default=False, help='Use bilinear upsampling')
