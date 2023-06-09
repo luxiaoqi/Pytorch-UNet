@@ -35,11 +35,12 @@ def dcm2bmp(resource, des):
     RescaleIntercept = readDCM.RescaleIntercept
     WindowCenter = readDCM.WindowCenter
     WindowWidth = readDCM.WindowWidth
-    max_val = np.max(image)
-    min_val = np.min(image)
+    max_val = float(np.max(image))
+    min_val = float(np.min(image))
     img_arr = (image - min_val)*255 / (max_val - min_val)
     img_arr = img_arr.astype(np.uint8)
-	
+
+	#根据文件自带的窗宽窗位转换
     # image = image*RescaleSlope+RescaleIntercept
     # min_val = WindowCenter-WindowWidth/2
     # max_val = WindowCenter+WindowWidth/2
@@ -48,16 +49,24 @@ def dcm2bmp(resource, des):
     # img_arr[img_arr >= 255.0] = 255.0
     # img_arr = img_arr.astype(np.uint8)
 
-    #hist图
-    # hist = cv2.calcHist([image], [0], None, [256], [0, 256])
-    # plt.hist(image.ravel(), 256)
-    # plt.show()
+    fortest = 1
+    if fortest:
+        image = image * RescaleSlope + RescaleIntercept
+        # image = image.astype(np.uint16)
+        #hist图
+        # hist = cv2.calcHist([image], [0], None, [256], [min_val, max_val])
+        # plt.plot(hist)
+        # plt.show()
+        plt.hist(image.ravel(), 256)
+        plt.show()
 
-    #show image view
-    # cv2.imshow("image show",img_arr)
-    # cv2.waitKey(0)
-
-    cv2.imwrite(des, img_arr)
+        plt.imshow(image)
+        plt.show()
+        #show image view
+        # cv2.imshow("image show",image)
+        # cv2.waitKey(0)
+    else:
+        cv2.imwrite(des, img_arr)
 
     #show image view
     # img_arr=cv2.resize(img_arr, (256, 256), interpolation=cv2.INTER_LINEAR)
@@ -73,7 +82,8 @@ def main():
     args = get_args()
     path = args.inDir #'D:\workspace\Scout\scout_cardiac\dcm'
     files = getFiles(path, '.dcm')
-    # files = ["D:\workspace\Scout\scout_cardiac\dcm\\976_101_1862.dcm"]
+    temp = ["30721_101_4968.dcm"]  #"30326_101_4900.dcm", "30467_101_2345.dcm", "30260_101_676.dcm",
+    files = ["D:\workspace\Scout\scout_cardiac\dcm\\"+f for f in temp]
     print(len(files))
     #print(files)
     for file in files:
@@ -95,6 +105,12 @@ def showImage():
     # ar = np.array(img)
     # img.show()
 
+def showWWandWL(toplimit, downLimit):
+    toplimit = toplimit*1-1024
+    downLimit = downLimit*1-1024
+    temp = 'wl={}, ww={}'.format((toplimit+downLimit)/2, abs(toplimit-downLimit))
+    print(temp)
 
 if __name__== "__main__" :
+    #showWWandWL(1160, 1060)
     main()
