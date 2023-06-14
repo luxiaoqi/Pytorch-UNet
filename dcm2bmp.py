@@ -35,21 +35,25 @@ def dcm2bmp(resource, des):
     RescaleIntercept = readDCM.RescaleIntercept
     WindowCenter = readDCM.WindowCenter
     WindowWidth = readDCM.WindowWidth
-    max_val = float(np.max(image))
-    min_val = float(np.min(image))
-    img_arr = (image - min_val)*255 / (max_val - min_val)
-    img_arr = img_arr.astype(np.uint8)
 
-	#根据文件自带的窗宽窗位转换
-    # image = image*RescaleSlope+RescaleIntercept
-    # min_val = WindowCenter-WindowWidth/2
-    # max_val = WindowCenter+WindowWidth/2
-    # img_arr = (image - min_val)*255.0 / (max_val - min_val)
-    # img_arr[img_arr <= 0] = 0
-    # img_arr[img_arr >= 255.0] = 255.0
+    #老的算法
+    # max_val = float(np.max(image))
+    # min_val = float(np.min(image))
+    # img_arr = (image - min_val)*255 / (max_val - min_val)
     # img_arr = img_arr.astype(np.uint8)
 
-    fortest = 1
+	#根据特定窗宽窗位转换
+    WindowCenter = 76   #根据心脏的条件
+    WindowWidth = 200
+    image = image*RescaleSlope+RescaleIntercept
+    min_val = WindowCenter-WindowWidth/2.0
+    max_val = WindowCenter+WindowWidth/2.0
+    img_arr = (image - min_val)*255.0 / (max_val - min_val)
+    img_arr[img_arr <= 0] = 0
+    img_arr[img_arr >= 255.0] = 255.0
+    img_arr = img_arr.astype(np.uint8)
+
+    fortest = 0
     if fortest:
         image = image * RescaleSlope + RescaleIntercept
         # image = image.astype(np.uint16)
@@ -82,13 +86,13 @@ def main():
     args = get_args()
     path = args.inDir #'D:\workspace\Scout\scout_cardiac\dcm'
     files = getFiles(path, '.dcm')
-    temp = ["30721_101_4968.dcm"]  #"30326_101_4900.dcm", "30467_101_2345.dcm", "30260_101_676.dcm",
-    files = ["D:\workspace\Scout\scout_cardiac\dcm\\"+f for f in temp]
+    # temp = ["30721_101_4968.dcm"]  #"30326_101_4900.dcm", "30467_101_2345.dcm", "30260_101_676.dcm",
+    # files = ["D:\workspace\Scout\scout_cardiac\dcm\\"+f for f in temp]
     print(len(files))
     #print(files)
     for file in files:
         res = os.path.splitext(file)
-        bmpfile = res[0] + '.bmp'
+        bmpfile = res[0] + '.png'    #主要感觉png更方便，现改换png
         dcm2bmp(file, bmpfile)
 
         # temp = cv2.imread(bmpfile, flags=0)
