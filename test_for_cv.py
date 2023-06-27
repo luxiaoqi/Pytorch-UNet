@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
+from PIL import Image
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
@@ -19,14 +20,18 @@ def cv2_do():
     # key = cv2.waitKey(3000)
     # cv2.destroyWindow(windowname)
 
-    # img_arr = cv2.imread('image\\11_101_29.png', 0)
-    # img_arr = np.zeros((255, 255, 3),dtype=np.uint8)
+    # img = Image.open('MainFrame_HDLogo.png')
+    # ar = np.array(img)
+    # img.show()
+    pass
+
+    # img_arr = cv2.imread('MainFrame_HDLogo.png')  # 'image\\11_101_29.png'
+    # img_arr1 = cv2.imread('MainFrame_HDLogo1.png')
+    # #img_arr = np.zeros((255, 255, 3),dtype=np.uint8)
     # cv2.imshow('one', img_arr)
-    # img_arr[0:20, 3:20, 2] = 255
+    # cv2.imshow('one2', img_arr1)
     # #print(img_arr, '\n', img_arr.item(3, 6, 2))
-    # cv2.imshow('two', img_arr)
     # cv2.waitKey(20000)
-    # cv2.destroyAllWindows()
 
     # plt.imshow(img_arr, cmap=plt.cm.gray)
     # plt.show()
@@ -324,7 +329,6 @@ def cv2_do():
     # plt.show()
     #import normalize_thorax_PA as thorax
     #print(thorax.settings)
-    pass
 
 
 cv2_do()

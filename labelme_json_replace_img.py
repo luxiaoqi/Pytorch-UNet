@@ -11,7 +11,8 @@ import os
 import os.path as osp
 import imgviz
 import PIL.Image
-from labelme.logger import logger
+#from labelme.logger import logger
+import logging
 
 def getFiles(path, ext=''):
     filesTemp = []
@@ -27,9 +28,10 @@ def getFiles(path, ext=''):
 
 ##用来替换json中的图片
 def replace_img():
+    logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser()
     parser.add_argument("json_dir")
-    parser.add_argument("image_dir")
+    parser.add_argument("image_dir") #用于替换的图片所在位置
     args = parser.parse_args()
     image_dir = args.image_dir
     if not (args.json_dir and osp.isdir(args.json_dir)):
@@ -48,9 +50,10 @@ def replace_img():
             imageData = base64.b64encode(imageData).decode("utf-8")
         data["imageData"] = imageData
         data["imagePath"] = os.path.basename(replacedImg)
-        out_json_file = os.path.splitext(json_file)[0]+"_out"+".json"
+        out_json_file = os.path.splitext(json_file)[0]+".json"
         with open(out_json_file, "w") as f:
             json.dump(data, f)
+            logging.info("Saved to: {}".format(out_json_file))
 
 #用来显示json文件结果
 def draw_json():
@@ -92,5 +95,5 @@ def draw_json():
 
 
 if __name__ == "__main__":
-    replace_img()
+    replace_img()  #替换json中的图片
     #draw_json()
