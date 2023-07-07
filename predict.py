@@ -137,9 +137,18 @@ if __name__ == '__main__':
             mask = mask.astype(np.uint8)
             kernal = np.ones((5,5), np.uint8)
             mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernal)
-            rectList = []
             contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            cv2.drawContours(img_draw, contours, -1,(255), 2)
+
+            rectList = [np.int0(cv2.boundingRect(contour)) for contour in contours]
+            for rect in rectList:
+                x,y,w,h=rect
+                cv2.rectangle(img_draw, (x,y), (x+w,y+h), 255, 2)
+
+            # rectList = [np.int0(cv2.boxPoints(cv2.minAreaRect(contour))) for contour in contours]
+            # for rect in rectList:
+            #     cv2.drawContours(img_draw, [rect], -1, (255), 2)
+
+            #cv2.drawContours(img_draw, contours, -1,(255), 2)
             Image.fromarray(img_draw).save(out_filename)
 
         if args.viz:
