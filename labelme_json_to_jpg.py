@@ -44,12 +44,12 @@ if __name__== "__main__" :
         # if i > 3:
         #     break
         file = files[i]
-        cmd = "labelme_json_to_dataset.exe " + file + " "
+        cmd = 'labelme_json_to_dataset.exe "' + file + '" '
         file = os.path.basename(file)
         res = os.path.splitext(file)
         outfile = res[0]
         outfile = os.path.join(out,outfile)
-        cmd = cmd + " -o  "+outfile
+        cmd = cmd + ' -o  "'+outfile+'"'
         os.system(cmd)
 
         # img_arr = cv2.imread(os.path.join(outfile,"label.png"), 0)

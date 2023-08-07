@@ -14,6 +14,7 @@ import PIL.Image
 #from labelme.logger import logger
 import logging
 
+
 def getFiles(path, ext=''):
     filesTemp = []
     for root, dirs, files in os.walk(path):
@@ -25,6 +26,7 @@ def getFiles(path, ext=''):
             filesTemp.append(filePath)
         return filesTemp
     return filesTemp
+
 
 ##用来替换json中的图片
 def replace_img():
@@ -54,6 +56,38 @@ def replace_img():
         with open(out_json_file, "w") as f:
             json.dump(data, f)
             logging.info("Saved to: {}".format(out_json_file))
+
+
+class reset_label_handler:
+    def __init__(self, value=1):
+        self.label_vaule = value
+
+    def __call__(self, data, json_file):
+        shapes = data["shapes"]
+        for shape in shapes:
+            shape["label"] = str(self.label_vaule)
+
+def json_handler(handler):
+    logging.basicConfig(level=logging.INFO)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("json_dir")
+    #parser.add_argument("image_dir") #用于替换的图片所在位置
+    args = parser.parse_args()
+    #image_dir = args.image_dir
+    if not (args.json_dir and osp.isdir(args.json_dir)):
+        return
+    json_file_arr = getFiles(args.json_dir, ".json")
+    for json_file in json_file_arr:
+        data = json.load(open(json_file))
+        # data["imageData"] = imageData
+        # data["imagePath"] = os.path.basename(replacedImg)
+        if handler:
+            handler(data, json_file)
+        out_json_file = os.path.splitext(json_file)[0]+".json"
+        with open(out_json_file, "w") as f:
+            json.dump(data, f)
+            logging.info("Saved to: {}".format(out_json_file))
+
 
 #用来显示json文件结果
 def draw_json():
@@ -96,4 +130,8 @@ def draw_json():
 
 if __name__ == "__main__":
     replace_img()  #替换json中的图片
+
+    # handler = reset_label_handler(1)
+    # json_handler(handler)
+
     #draw_json()

@@ -149,6 +149,7 @@ if __name__ == '__main__':
             #     cv2.drawContours(img_draw, [rect], -1, (255), 2)
 
             #cv2.drawContours(img_draw, contours, -1,(255), 2)
+
             Image.fromarray(img_draw).save(out_filename)
 
         if args.viz:

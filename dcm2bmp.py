@@ -33,6 +33,8 @@ def dcm2bmp(resource, des):
     image = np.array(readDCM.pixel_array)
     RescaleSlope = readDCM.RescaleSlope
     RescaleIntercept = readDCM.RescaleIntercept
+
+    #根据文件中的窗宽窗位
     WindowCenter = readDCM.WindowCenter
     WindowWidth = readDCM.WindowWidth
 
@@ -45,6 +47,12 @@ def dcm2bmp(resource, des):
 	#根据特定窗宽窗位转换
     WindowCenter = 76   #根据心脏的条件
     WindowWidth = 200
+
+    #GE定位片
+    # WindowCenter = 215   #根据心脏的条件
+    # WindowWidth = 648
+
+
     image = image*RescaleSlope+RescaleIntercept
     min_val = WindowCenter-WindowWidth/2.0
     max_val = WindowCenter+WindowWidth/2.0
