@@ -41,16 +41,16 @@ if __name__== "__main__" :
         os.mkdir(outLabel)
 
     for i in range(len(files)):
-        # if i > 3:
-        #     break
-        file = files[i]
-        cmd = 'labelme_json_to_dataset.exe "' + file + '" '
-        file = os.path.basename(file)
+        jsonFile = files[i]
+        cmd = 'labelme_json_to_dataset.exe "' + jsonFile + '" '
+        file = os.path.basename(jsonFile)
         res = os.path.splitext(file)
         outfile = res[0]
         outfile = os.path.join(out,outfile)
         cmd = cmd + ' -o  "'+outfile+'"'
-        os.system(cmd)
+        # os.system(cmd)
+        from json_to_dataset import json_to_dataset_fun
+        json_to_dataset_fun(jsonFile, outfile, False)
 
         # img_arr = cv2.imread(os.path.join(outfile,"label.png"), 0)
         # print(np.max(img_arr), np.min(img_arr))
