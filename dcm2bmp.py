@@ -107,8 +107,15 @@ def main():
         # print(temp.shape)
 
 def showImage():
-    path='D:\\workspace\\Pytorch-UNet\\data\\test\\30246_101_29.bmp'
+    path='D:\\temp\\1.1576223378165.5586.png'
+    # img = Image.open(path, mode='r')
+    # mask = np.asarray(img)
+    # mmax = np.max(mask)
+    # mmin = np.min(mask)
+    # #img.show()
     img_arr = cv2.imread(path)
+    img_arr[0:10,0:5] = [0, 128, 111]
+    cv2.imwrite('D:\\temp\\1.1559619758115.68_out.png', img_arr)
     mmax = np.max(img_arr)
     mmin = np.min(img_arr)
     cv2.imshow("image show", img_arr)
@@ -125,4 +132,7 @@ def showWWandWL(toplimit, downLimit):
 
 if __name__== "__main__" :
     #showWWandWL(1160, 1060)
+
+    #showImage()
+
     main()

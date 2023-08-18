@@ -11,6 +11,7 @@ import cv2
 from utils.data_loading import BasicDataset
 from unet import UNet
 from utils.utils import plot_img_and_mask
+import imgviz
 
 def predict_img(net,
                 full_img,
@@ -47,7 +48,7 @@ def get_args():
     parser.add_argument('--scale', '-s', type=float, default=0.5,
                         help='Scale factor for the input images')
     parser.add_argument('--bilinear', action='store_true', default=False, help='Use bilinear upsampling')
-    parser.add_argument('--classes', '-c', type=int, default=2, help='Number of classes')
+    parser.add_argument('--classes', '-c', type=int, default=3, help='Number of classes')
 
     return parser.parse_args()
 
@@ -133,16 +134,41 @@ if __name__ == '__main__':
             # 转成RECT
             img_draw = img.copy()
             img_draw = np.asarray(img_draw)
+            img_draw = cv2.merge((img_draw, img_draw, img_draw))
             out_filename = out_files[i]
-            mask = mask.astype(np.uint8)
-            kernal = np.ones((5,5), np.uint8)
-            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernal)
-            contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            kernal = np.ones((5, 5), np.uint8)
+            colorMap = imgviz.label_colormap()
+            maskList = np.unique(mask)
+            backgroundValue = 0
+            maskList = maskList[maskList > backgroundValue]
+            for mk in maskList:
+                #maskTemp = np.zeros_like(mask)
+                maskTemp = np.where(mask == mk, mk, backgroundValue)
+                maskTemp = maskTemp.astype(np.uint8)
+                maskTemp = cv2.morphologyEx(maskTemp, cv2.MORPH_OPEN, kernal)
+                contours, hierarchy = cv2.findContours(maskTemp, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-            rectList = [np.int0(cv2.boundingRect(contour)) for contour in contours]
-            for rect in rectList:
-                x,y,w,h=rect
-                cv2.rectangle(img_draw, (x,y), (x+w,y+h), 255, 2)
+                rectList = [np.int0(cv2.boundingRect(contour)) for contour in contours]
+                color = colorMap[mk]
+                color = [int(x) for x in color]
+                for rect in rectList:
+                    x, y, w, h = rect
+                    cv2.rectangle(img_draw, (x, y), (x + w, y + h), color, 2)
+                #cv2.drawContours(img_draw, contours, -1, color, 2)
+
+            ##error
+            # img_draw = img.copy()
+            # img_draw = np.asarray(img_draw)
+            # out_filename = out_files[i]
+            # mask = mask.astype(np.uint8)
+            # kernal = np.ones((5,5), np.uint8)
+            # mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernal)
+            # contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            #
+            # rectList = [np.int0(cv2.boundingRect(contour)) for contour in contours]
+            # for rect in rectList:
+            #     x,y,w,h=rect
+            #     cv2.rectangle(img_draw, (x,y), (x+w,y+h), 255, 2)
 
             # rectList = [np.int0(cv2.boxPoints(cv2.minAreaRect(contour))) for contour in contours]
             # for rect in rectList:
