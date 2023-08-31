@@ -26,7 +26,7 @@ def predict_img(net,
     with torch.no_grad():
         output = net(img).cpu()
         output = F.interpolate(output, (full_img.size[1], full_img.size[0]), mode='bilinear')
-        if net.n_classes > 1:
+        if len(output[0]) > 1:       #if net.n_classes > 1:
             mask = output.argmax(dim=1)
         else:
             mask = torch.sigmoid(output) > out_threshold
@@ -49,7 +49,7 @@ def get_args():
                         help='Scale factor for the input images')
     parser.add_argument('--bilinear', action='store_true', default=False, help='Use bilinear upsampling')
     parser.add_argument('--classes', '-c', type=int, default=3, help='Number of classes')
-
+    parser.add_argument('--traced', default=False, help='check traced')
     return parser.parse_args()
 
 
@@ -88,6 +88,7 @@ def getFiles(path, ext=''):
         return filesTemp
     return filesTemp
 
+
 if __name__ == '__main__':
     args = get_args()
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -98,18 +99,19 @@ if __name__ == '__main__':
 
     in_files = args.input
     out_files = get_output_filenames(args)
-
-    net = UNet(n_channels=1, n_classes=args.classes, bilinear=args.bilinear)
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'Loading model {args.model}')
     logging.info(f'Using device {device}')
 
-    net.to(device=device)
-    state_dict = torch.load(args.model, map_location=device)
-    mask_values = state_dict.pop('mask_values', [0, 1])
-    net.load_state_dict(state_dict)
+    if not args.traced:
+        net = UNet(n_channels=1, n_classes=args.classes, bilinear=args.bilinear)
+        state_dict = torch.load(args.model, map_location=device)
+        mask_values = state_dict.pop('mask_values', [0, 1])
+        net.load_state_dict(state_dict)
+    else:
+        net = torch.jit.load(args.model, map_location=device)
 
+    net.to(device=device)
     logging.info('Model loaded!')
 
     for i, filename in enumerate(in_files):
