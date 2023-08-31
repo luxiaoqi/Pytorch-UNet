@@ -26,6 +26,7 @@ def predict_img(net,
     with torch.no_grad():
         output = net(img).cpu()
         output = F.interpolate(output, (full_img.size[1], full_img.size[0]), mode='bilinear')
+        #output = torch.cat([output[:, 0], output[:, 1]], dim=0).unsqueeze(dim=0)
         if len(output[0]) > 1:       #if net.n_classes > 1:
             mask = output.argmax(dim=1)
         else:
